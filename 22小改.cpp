@@ -1,8 +1,8 @@
 /*
- * Îå×ÓÆåAI³ÌĞò£¨ÍêÈ«Í¨ÓÃ°æ±¾ - ÊÊÓÃÓÚËùÓĞÆ½Ì¨£©
- * ÊµÏÖ»ùÓÚAlpha-Beta¼ôÖ¦µÄËÑË÷Ëã·¨
- * ×÷Õß£º»ùÓÚÔ­´´Éè¼ÆÊµÏÖ
- * ÈÕÆÚ£º2025-11-17
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½AIï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«Í¨ï¿½Ã°æ±¾ - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ½Ì¨ï¿½ï¿½
+ * Êµï¿½Ö»ï¿½ï¿½ï¿½Alpha-Betaï¿½ï¿½Ö¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã·¨
+ * ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
+ * ï¿½ï¿½ï¿½Ú£ï¿½2025-11-17
  */
 
 #include <stdio.h>
@@ -11,14 +11,14 @@
 #include <time.h>
 #include <limits.h>
 
- /* ==================== ³£Á¿¶¨Òå ==================== */
+ /* ==================== ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ==================== */
 
 #define BOARD_SIZE 12
 #define EMPTY 0
 #define BLACK 1
 #define WHITE 2
 
-// ÆåĞÍÆÀ·Ö£¨Ô­´´Éè¼Æ£©
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö£ï¿½Ô­ï¿½ï¿½ï¿½ï¿½Æ£ï¿½
 #define SCORE_FIVE       100000
 #define SCORE_LIVE_FOUR   20000
 #define SCORE_RUSH_FOUR    5000
@@ -28,31 +28,31 @@
 #define SCORE_SLEEP_TWO      50
 #define SCORE_SINGLE         10
 
-// ËÑË÷²ÎÊı
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #define MAX_CANDIDATES 15
-#define MIN_SCORE_THRESHOLD 5  // ×îµÍÆÀ·ÖãĞÖµ£¬µÍÓÚ´ËÖµµÄºòÑ¡Î»ÖÃ²»¿¼ÂÇ
+#define MIN_SCORE_THRESHOLD 5  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½Öµï¿½Äºï¿½Ñ¡Î»ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½
 #define INF 999999999
 
-// Ê±¼ä¿ØÖÆ£¨ºÁÃë£©
+// Ê±ï¿½ï¿½ï¿½ï¿½Æ£ï¿½ï¿½ï¿½ï¿½ë£©
 #define TURN_TIME_LIMIT 1900
 #define TOTAL_TIME_LIMIT 88000
 
-/* ==================== Êı¾İ½á¹¹¶¨Òå ==================== */
+/* ==================== ï¿½ï¿½ï¿½İ½á¹¹ï¿½ï¿½ï¿½ï¿½ ==================== */
 
-// ÆåÅÌ½á¹¹
+// ï¿½ï¿½ï¿½Ì½á¹¹
 typedef struct {
     int grid[BOARD_SIZE][BOARD_SIZE];
     int move_count;
 } Board;
 
-// ×ß·¨½á¹¹
+// ï¿½ß·ï¿½ï¿½á¹¹
 typedef struct {
     int row;
     int col;
     int priority;
 } Move;
 
-// Ê±¼ä¹ÜÀíÆ÷
+// Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 typedef struct {
     long long total_time_used;
     long long current_start;
@@ -60,7 +60,7 @@ typedef struct {
     int total_time_limit;
 } TimeManager;
 
-// ËÑË÷ÉÏÏÂÎÄ
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 typedef struct {
     Board* board;
     TimeManager* timer;
@@ -68,27 +68,27 @@ typedef struct {
     int enemy_side;
 } SearchContext;
 
-/* ==================== È«¾Ö±äÁ¿ ==================== */
+/* ==================== È«ï¿½Ö±ï¿½ï¿½ï¿½ ==================== */
 
 Board game_board;
 TimeManager time_manager;
 int my_color = 0;
 int enemy_color = 0;
 
-// ËÄ¸öÖ÷·½Ïò£¨Ë®Æ½¡¢´¹Ö±¡¢Á½Ìõ¶Ô½ÇÏß£©
+// ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë®Æ½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ß£ï¿½
 const int dir_x[4] = { 1, 0, 1, 1 };
 const int dir_y[4] = { 0, 1, 1, -1 };
 
-/* ==================== Ê±¼ä¹ÜÀíº¯Êı ==================== */
+/* ==================== Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ==================== */
 
-// »ñÈ¡µ±Ç°Ê±¼ä£¨ºÁÃë£©- Ê¹ÓÃ±ê×¼C¿âµÄÍ¨ÓÃÊµÏÖ
+// ï¿½ï¿½È¡ï¿½ï¿½Ç°Ê±ï¿½ä£¨ï¿½ï¿½ï¿½ë£©- Ê¹ï¿½Ã±ï¿½×¼Cï¿½ï¿½ï¿½Í¨ï¿½ï¿½Êµï¿½ï¿½
 long long get_time_ms() {
-    // Ê¹ÓÃ±ê×¼C¿âµÄclock()º¯Êı
-    // ×¢Òâ£ºclock()·µ»ØµÄÊÇCPUÊ±¼ä£¬²»ÊÇÇ½ÉÏÊ±¼ä£¬µ«¶ÔÓÚÕâ¸öÓ¦ÓÃ×ã¹»ÁË
+    // Ê¹ï¿½Ã±ï¿½×¼Cï¿½ï¿½ï¿½clock()ï¿½ï¿½ï¿½ï¿½
+    // ×¢ï¿½â£ºclock()ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½CPUÊ±ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½Ç½ï¿½ï¿½Ê±ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ã¹»ï¿½ï¿½
     return (long long)(clock() * 1000.0 / CLOCKS_PER_SEC);
 }
 
-// ³õÊ¼»¯Ê±¼ä¹ÜÀíÆ÷
+// ï¿½ï¿½Ê¼ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void init_timer(TimeManager* tm) {
     tm->total_time_used = 0;
     tm->current_start = 0;
@@ -96,18 +96,18 @@ void init_timer(TimeManager* tm) {
     tm->total_time_limit = TOTAL_TIME_LIMIT;
 }
 
-// ¿ªÊ¼Ò»¸ö»ØºÏ
+// ï¿½ï¿½Ê¼Ò»ï¿½ï¿½ï¿½Øºï¿½
 void start_turn(TimeManager* tm) {
     tm->current_start = get_time_ms();
 }
 
-// ½áÊøÒ»¸ö»ØºÏ
+// ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Øºï¿½
 void end_turn(TimeManager* tm) {
     long long elapsed = get_time_ms() - tm->current_start;
     tm->total_time_used += elapsed;
 }
 
-// ¼ì²éÊÇ·ñ³¬Ê±
+// ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Ê±
 int is_timeout(TimeManager* tm) {
     long long current = get_time_ms();
     long long turn_elapsed = current - tm->current_start;
@@ -123,9 +123,9 @@ int is_timeout(TimeManager* tm) {
     return 0;
 }
 
-/* ==================== ÆåÅÌ¹ÜÀíº¯Êı ==================== */
+/* ==================== ï¿½ï¿½ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ==================== */
 
-// ³õÊ¼»¯ÆåÅÌ
+// ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void init_board(Board* board) {
     int i, j;
     for (i = 0; i < BOARD_SIZE; i++) {
@@ -136,18 +136,18 @@ void init_board(Board* board) {
     board->move_count = 0;
 }
 
-// ±ß½ç¼ì²é
+// ï¿½ß½ï¿½ï¿½ï¿½
 int in_bounds(int row, int col) {
     return row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE;
 }
 
-// ¼ì²éÊÇ·ñÎª¿ÕÎ»
+// ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Îªï¿½ï¿½Î»
 int is_empty(Board* board, int row, int col) {
     if (!in_bounds(row, col)) return 0;
     return board->grid[row][col] == EMPTY;
 }
 
-// Âä×Ó
+// ï¿½ï¿½ï¿½ï¿½
 void place_stone(Board* board, int row, int col, int color) {
     if (in_bounds(row, col) && board->grid[row][col] == EMPTY) {
         board->grid[row][col] = color;
@@ -155,7 +155,7 @@ void place_stone(Board* board, int row, int col, int color) {
     }
 }
 
-// »ÚÆå
+// ï¿½ï¿½ï¿½ï¿½
 void undo_stone(Board* board, int row, int col) {
     if (in_bounds(row, col) && board->grid[row][col] != EMPTY) {
         board->grid[row][col] = EMPTY;
@@ -163,41 +163,35 @@ void undo_stone(Board* board, int row, int col) {
     }
 }
 
-// ¼ì²é´ÓÄ³µã¿ªÊ¼ÊÇ·ñĞÎ³ÉÎåÁ¬
+// è¾…åŠ©å‡½æ•°ï¼šæ²¿æŸä¸ªæ–¹å‘è®¡æ•°è¿ç»­çš„æ£‹å­
+static int count_direction(Board* board, int row, int col, int dx, int dy, int color) {
+    int count = 0;
+    int i;
+    for (i = 1; i < 5; i++) {
+        int nr = row + dx * i;
+        int nc = col + dy * i;
+        if (in_bounds(nr, nc) && board->grid[nr][nc] == color) {
+            count++;
+        } else {
+            break;
+        }
+    }
+    return count;
+}
+
+// ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ã¿ªÊ¼ï¿½Ç·ï¿½ï¿½Î³ï¿½ï¿½ï¿½ï¿½ï¿½
 int check_five(Board* board, int row, int col, int color) {
-    int d, i, count;
+    int d;
 
     if (!in_bounds(row, col) || board->grid[row][col] != color) {
         return 0;
     }
 
-    // ¼ì²éËÄ¸ö·½Ïò
+    // ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½
     for (d = 0; d < 4; d++) {
-        count = 1;
-
-        // Õı·½Ïò
-        for (i = 1; i < 5; i++) {
-            int nr = row + dir_x[d] * i;
-            int nc = col + dir_y[d] * i;
-            if (in_bounds(nr, nc) && board->grid[nr][nc] == color) {
-                count++;
-            }
-            else {
-                break;
-            }
-        }
-
-        // ·´·½Ïò
-        for (i = 1; i < 5; i++) {
-            int nr = row - dir_x[d] * i;
-            int nc = col - dir_y[d] * i;
-            if (in_bounds(nr, nc) && board->grid[nr][nc] == color) {
-                count++;
-            }
-            else {
-                break;
-            }
-        }
+        int count = 1;  // è‡ªå·±è¿™ä¸ªç‚¹
+        count += count_direction(board, row, col, dir_x[d], dir_y[d], color);    // æ­£å‘
+        count += count_direction(board, row, col, -dir_x[d], -dir_y[d], color);  // åå‘
 
         if (count >= 5) return 1;
     }
@@ -205,9 +199,9 @@ int check_five(Board* board, int row, int col, int color) {
     return 0;
 }
 
-/* ==================== ÆÀ¹Àº¯Êı ==================== */
+/* ==================== ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ==================== */
 
-// ÅĞ¶ÏÆåĞÍµÃ·Ö
+// ï¿½Ğ¶ï¿½ï¿½ï¿½ï¿½ÍµÃ·ï¿½
 int get_pattern_score(int count, int left_open, int right_open) {
     int open_ends = left_open + right_open;
 
@@ -236,19 +230,19 @@ int get_pattern_score(int count, int left_open, int right_open) {
     return SCORE_SINGLE;
 }
 
-// ¿ìËÙµ¥µãÆÀ¹À£¨ÓÃÓÚºòÑ¡ÅÅĞò£©
+// ï¿½ï¿½ï¿½Ùµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úºï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½
 int evaluate_point(Board* board, int row, int col, int color) {
     int total = 0;
     int d, i, count, left_open, right_open;
     int nr, nc;
 
-    // ËÄ¸ö·½Ïò
+    // ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½
     for (d = 0; d < 4; d++) {
-        count = 1;  // °üº¬µ±Ç°µã
+        count = 1;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½
         left_open = 0;
         right_open = 0;
 
-        // Õı·½ÏòÍ³¼Æ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½
         for (i = 1; i < 6; i++) {
             nr = row + dir_x[d] * i;
             nc = col + dir_y[d] * i;
@@ -265,7 +259,7 @@ int evaluate_point(Board* board, int row, int col, int color) {
             }
         }
 
-        // ·´·½ÏòÍ³¼Æ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½
         for (i = 1; i < 6; i++) {
             nr = row - dir_x[d] * i;
             nc = col - dir_y[d] * i;
@@ -288,7 +282,7 @@ int evaluate_point(Board* board, int row, int col, int color) {
     return total;
 }
 
-// È«¾Ö¾ÖÃæÆÀ¹À
+// È«ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 int evaluate_board(Board* board, int my_side, int enemy_side) {
     int my_score = 0;
     int enemy_score = 0;
@@ -297,7 +291,7 @@ int evaluate_board(Board* board, int my_side, int enemy_side) {
     for (r = 0; r < BOARD_SIZE; r++) {
         for (c = 0; c < BOARD_SIZE; c++) {
             if (board->grid[r][c] == my_side) {
-                // ÁÙÊ±¼ÙÉèÂä×ÓÀ´ÆÀ¹À
+                // ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 int old = board->grid[r][c];
                 board->grid[r][c] = EMPTY;
                 my_score += evaluate_point(board, r, c, my_side);
@@ -312,20 +306,20 @@ int evaluate_board(Board* board, int my_side, int enemy_side) {
         }
     }
 
-    // ·Ç¶Ô³ÆÈ¨ÖØ£º½ø¹¥ÂÔÓÅÓÚ·ÀÊØ
+    // ï¿½Ç¶Ô³ï¿½È¨ï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú·ï¿½ï¿½ï¿½
     return my_score - (enemy_score * 85 / 100);
 }
 
-/* ==================== ËÑË÷ÒıÇæ ==================== */
+/* ==================== ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ==================== */
 
-// ±È½Ïº¯Êı£¨ÓÃÓÚqsort£©
+// ï¿½È½Ïºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½qsortï¿½ï¿½
 int compare_moves(const void* a, const void* b) {
     Move* ma = (Move*)a;
     Move* mb = (Move*)b;
-    return mb->priority - ma->priority;  // ½µĞò
+    return mb->priority - ma->priority;  // ï¿½ï¿½ï¿½ï¿½
 }
 
-// Éú³ÉºòÑ¡×ß·¨£¨»ùÓÚÆÀ·ÖÉ¸Ñ¡£©
+// ï¿½ï¿½ï¿½Éºï¿½Ñ¡ï¿½ß·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¸Ñ¡ï¿½ï¿½
 int generate_candidates(SearchContext* ctx, Move* candidates, int for_side) {
     Board* board = ctx->board;
     int count = 0;
@@ -333,19 +327,19 @@ int generate_candidates(SearchContext* ctx, Move* candidates, int for_side) {
     int attack, defense, total_value;
     int enemy = (for_side == BLACK) ? WHITE : BLACK;
 
-    // ¼ÆËã¶¯Ì¬ãĞÖµ£º¸ù¾İÆå¾Ö½×¶Îµ÷ÕûÉ¸Ñ¡±ê×¼
+    // ï¿½ï¿½ï¿½ã¶¯Ì¬ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½×¶Îµï¿½ï¿½ï¿½É¸Ñ¡ï¿½ï¿½×¼
     int move_count = board->move_count;
     int threshold = MIN_SCORE_THRESHOLD;
 
-    // ¿ª¾Ö½×¶Î£º¸ü¿íËÉµÄÉ¸Ñ¡£¨ÔÊĞí¸ü¶àºòÑ¡Î»ÖÃ£©
+    // ï¿½ï¿½ï¿½Ö½×¶Î£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éµï¿½É¸Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡Î»ï¿½Ã£ï¿½
     if (move_count < 12) {
-        threshold = 0;  // ¿ª¾Ö¿¼ÂÇËùÓĞÎ»ÖÃ
+        threshold = 0;  // ï¿½ï¿½ï¿½Ö¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
     }
     else if (move_count < 30) {
         threshold = MIN_SCORE_THRESHOLD;
     }
     else {
-        // ÖĞºó¾Ö£ºÌá¸ßãĞÖµ£¬¾Û½¹¸ß¼ÛÖµÎ»ÖÃ
+        // ï¿½Ğºï¿½Ö£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½Û½ï¿½ï¿½ß¼ï¿½ÖµÎ»ï¿½ï¿½
         threshold = MIN_SCORE_THRESHOLD * 2;
     }
 
@@ -353,14 +347,14 @@ int generate_candidates(SearchContext* ctx, Move* candidates, int for_side) {
         for (c = 0; c < BOARD_SIZE; c++) {
             if (board->grid[r][c] != EMPTY) continue;
 
-            // ÆÀ¹À¸ÃµãµÄ¹¥»÷ºÍ·ÀÊØ¼ÛÖµ
+            // ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½Ä¹ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½Ø¼ï¿½Öµ
             attack = evaluate_point(board, r, c, for_side);
             defense = evaluate_point(board, r, c, enemy);
 
-            // ¼ÆËã×ÛºÏ¼ÛÖµ£¨¹¥·ÀÈ¨ÖØ 11:9£©
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ÛºÏ¼ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¨ï¿½ï¿½ 11:9ï¿½ï¿½
             total_value = attack * 11 + defense * 9;
 
-            // »ùÓÚÆÀ·ÖµÄÖÇÄÜÉ¸Ñ¡£ºÖ»±£ÁôÓĞ¼ÛÖµµÄÎ»ÖÃ
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½É¸Ñ¡ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¼ï¿½Öµï¿½ï¿½Î»ï¿½ï¿½
             if (total_value < threshold) continue;
 
             candidates[count].row = r;
@@ -368,15 +362,15 @@ int generate_candidates(SearchContext* ctx, Move* candidates, int for_side) {
             candidates[count].priority = total_value;
             count++;
 
-            if (count >= 256) break;  // ·ÀÖ¹Òç³ö
+            if (count >= 256) break;  // ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½
         }
         if (count >= 256) break;
     }
 
-    // ÅÅĞò£ºÓÅÏÈ¼¶´Ó¸ßµ½µÍ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½ï¿½Ó¸ßµï¿½ï¿½ï¿½
     qsort(candidates, count, sizeof(Move), compare_moves);
 
-    // ½Ø¶Ïµ½MAX_CANDIDATES
+    // ï¿½Ø¶Ïµï¿½MAX_CANDIDATES
     if (count > MAX_CANDIDATES) {
         count = MAX_CANDIDATES;
     }
@@ -384,7 +378,7 @@ int generate_candidates(SearchContext* ctx, Move* candidates, int for_side) {
     return count;
 }
 
-// ¼ì²éÒ»²½±ØÊ¤
+// ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê¤
 int find_winning_move(SearchContext* ctx, int side, Move* result) {
     Board* board = ctx->board;
     int r, c;
@@ -393,7 +387,7 @@ int find_winning_move(SearchContext* ctx, int side, Move* result) {
         for (c = 0; c < BOARD_SIZE; c++) {
             if (board->grid[r][c] != EMPTY) continue;
 
-            // ³¢ÊÔÂä×Ó
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             place_stone(board, r, c, side);
             int win = check_five(board, r, c, side);
             undo_stone(board, r, c);
@@ -409,32 +403,32 @@ int find_winning_move(SearchContext* ctx, int side, Move* result) {
     return 0;
 }
 
-// Ç°ÏòÉùÃ÷
+// Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 int alpha_beta(SearchContext* ctx, int depth, int alpha, int beta, int is_max);
 
-// ¼ÆËã×ÔÊÊÓ¦ËÑË÷Éî¶È
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 int get_search_depth(Board* board) {
     int move_count = board->move_count;
 
     if (move_count < 10) {
-        return 4;  // ¿ª¾Ö£ºÇ³ËÑ
+        return 4;  // ï¿½ï¿½ï¿½Ö£ï¿½Ç³ï¿½ï¿½
     }
     else if (move_count < 80) {
-        return 6;  // ÖĞ¾Ö£º±ê×¼Éî¶È
+        return 6;  // ï¿½Ğ¾Ö£ï¿½ï¿½ï¿½×¼ï¿½ï¿½ï¿½
     }
     else {
-        return 8;  // ²Ğ¾Ö£ºÉîËÑ
+        return 8;  // ï¿½Ğ¾Ö£ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 }
 
-// Alpha-BetaËÑË÷
+// Alpha-Betaï¿½ï¿½ï¿½ï¿½
 int alpha_beta(SearchContext* ctx, int depth, int alpha, int beta, int is_max) {
-    // ³¬Ê±¼ì²é
+    // ï¿½ï¿½Ê±ï¿½ï¿½ï¿½
     if (is_timeout(ctx->timer)) {
         return evaluate_board(ctx->board, ctx->my_side, ctx->enemy_side);
     }
 
-    // µ½´ïÒ¶×Ó½Úµã
+    // ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½Ó½Úµï¿½
     if (depth == 0) {
         return evaluate_board(ctx->board, ctx->my_side, ctx->enemy_side);
     }
@@ -444,7 +438,7 @@ int alpha_beta(SearchContext* ctx, int depth, int alpha, int beta, int is_max) {
     int current_side = is_max ? ctx->my_side : ctx->enemy_side;
     int i, score;
 
-    // Éú³ÉºòÑ¡
+    // ï¿½ï¿½ï¿½Éºï¿½Ñ¡
     num_moves = generate_candidates(ctx, candidates, current_side);
 
     if (num_moves == 0) {
@@ -452,15 +446,15 @@ int alpha_beta(SearchContext* ctx, int depth, int alpha, int beta, int is_max) {
     }
 
     if (is_max) {
-        // ¼º·½×ßÆå
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         int max_eval = -INF;
 
         for (i = 0; i < num_moves; i++) {
             place_stone(ctx->board, candidates[i].row, candidates[i].col, ctx->my_side);
 
-            // Á¢¼´¼ì²éÊ¤Àû
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¤ï¿½ï¿½
             if (check_five(ctx->board, candidates[i].row, candidates[i].col, ctx->my_side)) {
-                score = SCORE_FIVE - depth;  // Ô½¿ìÊ¤ÀûÔ½ºÃ
+                score = SCORE_FIVE - depth;  // Ô½ï¿½ï¿½Ê¤ï¿½ï¿½Ô½ï¿½ï¿½
             }
             else {
                 score = alpha_beta(ctx, depth - 1, alpha, beta, 0);
@@ -470,7 +464,7 @@ int alpha_beta(SearchContext* ctx, int depth, int alpha, int beta, int is_max) {
 
             if (score > max_eval) max_eval = score;
             if (score > alpha) alpha = score;
-            if (alpha >= beta) break;  // Beta¼ôÖ¦
+            if (alpha >= beta) break;  // Betaï¿½ï¿½Ö¦
 
             if (is_timeout(ctx->timer)) break;
         }
@@ -478,15 +472,15 @@ int alpha_beta(SearchContext* ctx, int depth, int alpha, int beta, int is_max) {
         return max_eval;
     }
     else {
-        // ¶ÔÊÖ×ßÆå
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         int min_eval = INF;
 
         for (i = 0; i < num_moves; i++) {
             place_stone(ctx->board, candidates[i].row, candidates[i].col, ctx->enemy_side);
 
-            // Á¢¼´¼ì²é¶ÔÊÖÊ¤Àû
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¤ï¿½ï¿½
             if (check_five(ctx->board, candidates[i].row, candidates[i].col, ctx->enemy_side)) {
-                score = -SCORE_FIVE + depth;  // ¶ÔÊÖÔ½ÍíÊ¤ÀûÔ½ºÃ
+                score = -SCORE_FIVE + depth;  // ï¿½ï¿½ï¿½ï¿½Ô½ï¿½ï¿½Ê¤ï¿½ï¿½Ô½ï¿½ï¿½
             }
             else {
                 score = alpha_beta(ctx, depth - 1, alpha, beta, 1);
@@ -496,7 +490,7 @@ int alpha_beta(SearchContext* ctx, int depth, int alpha, int beta, int is_max) {
 
             if (score < min_eval) min_eval = score;
             if (score < beta) beta = score;
-            if (alpha >= beta) break;  // Alpha¼ôÖ¦
+            if (alpha >= beta) break;  // Alphaï¿½ï¿½Ö¦
 
             if (is_timeout(ctx->timer)) break;
         }
@@ -505,30 +499,30 @@ int alpha_beta(SearchContext* ctx, int depth, int alpha, int beta, int is_max) {
     }
 }
 
-// ËÑË÷×î¼Ñ×ß·¨
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß·ï¿½
 void search_best_move(SearchContext* ctx, Move* best_move) {
-    // ²½Öè1£º¼ì²éÒ»²½±ØÊ¤
+    // ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê¤
     if (find_winning_move(ctx, ctx->my_side, best_move)) {
         return;
     }
 
-    // ²½Öè2£º¼ì²é±ØĞë·ÀÊØ
+    // ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if (find_winning_move(ctx, ctx->enemy_side, best_move)) {
         return;
     }
 
-    // ²½Öè3£ºÕı³£ËÑË÷
+    // ï¿½ï¿½ï¿½ï¿½3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     Move candidates[256];
     int num_moves = generate_candidates(ctx, candidates, ctx->my_side);
 
     if (num_moves == 0) {
-        // ¶µµ×£º·µ»ØÖĞĞÄ¸½½ü
+        // ï¿½ï¿½ï¿½×£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½
         best_move->row = BOARD_SIZE / 2;
         best_move->col = BOARD_SIZE / 2;
         return;
     }
 
-    // ÖÁÉÙÑ¡µÚÒ»¸öºòÑ¡
+    // ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ñ¡
     *best_move = candidates[0];
 
     int depth = get_search_depth(ctx->board);
@@ -562,9 +556,9 @@ void search_best_move(SearchContext* ctx, Move* best_move) {
     }
 }
 
-/* ==================== Ö÷¿ØÖÆºÍIO ==================== */
+/* ==================== ï¿½ï¿½ï¿½ï¿½ï¿½Æºï¿½IO ==================== */
 
-// ·ÅÖÃ³õÊ¼ËÄ×Ó
+// ï¿½ï¿½ï¿½Ã³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 void place_initial_stones(Board* board) {
     place_stone(board, 5, 5, WHITE);
     place_stone(board, 6, 6, WHITE);
@@ -572,7 +566,7 @@ void place_initial_stones(Board* board) {
     place_stone(board, 6, 5, BLACK);
 }
 
-// ´¦ÀíSTARTÖ¸Áî
+// ï¿½ï¿½ï¿½ï¿½STARTÖ¸ï¿½ï¿½
 void handle_start(const char* cmd) {
     int field;
     sscanf(cmd, "START %d", &field);
@@ -588,14 +582,14 @@ void handle_start(const char* cmd) {
     fflush(stdout);
 }
 
-// ´¦ÀíPLACEÖ¸Áî
+// ï¿½ï¿½ï¿½ï¿½PLACEÖ¸ï¿½ï¿½
 void handle_place(const char* cmd) {
     int x, y;
     sscanf(cmd, "PLACE %d %d", &x, &y);
     place_stone(&game_board, x, y, enemy_color);
 }
 
-// ´¦ÀíTURNÖ¸Áî
+// ï¿½ï¿½ï¿½ï¿½TURNÖ¸ï¿½ï¿½
 void handle_turn() {
     start_turn(&time_manager);
 
@@ -616,12 +610,12 @@ void handle_turn() {
     end_turn(&time_manager);
 }
 
-// ´¦ÀíENDÖ¸Áî
+// ï¿½ï¿½ï¿½ï¿½ENDÖ¸ï¿½ï¿½
 void handle_end(const char* cmd) {
-    // ÓÎÏ·½áÊø£¬²»ĞèÒªÌØÊâ´¦Àí
+    // ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½â´¦ï¿½ï¿½
 }
 
-/* ==================== Ö÷º¯Êı ==================== */
+/* ==================== ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ==================== */
 
 int main() {
     char command[128];
