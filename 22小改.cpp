@@ -179,6 +179,28 @@ static int count_direction(Board* board, int row, int col, int dx, int dy, int c
     return count;
 }
 
+// 辅助函数：沿某个方向扫描，返回连续棋子数和是否有开口
+static int scan_direction(Board* board, int row, int col, int dx, int dy, int color, int* open) {
+    int count = 0;
+    int i;
+    *open = 0;
+
+    for (i = 1; i < 6; i++) {
+        int nr = row + dx * i;
+        int nc = col + dy * i;
+        if (!in_bounds(nr, nc)) break;
+        if (board->grid[nr][nc] == color) {
+            count++;
+        } else if (board->grid[nr][nc] == EMPTY) {
+            *open = 1;
+            break;
+        } else {
+            break;
+        }
+    }
+    return count;
+}
+
 // ����ĳ�㿪ʼ�Ƿ��γ�����
 int check_five(Board* board, int row, int col, int color) {
     int d;
@@ -233,48 +255,16 @@ int get_pattern_score(int count, int left_open, int right_open) {
 // ���ٵ������������ں�ѡ����
 int evaluate_point(Board* board, int row, int col, int color) {
     int total = 0;
-    int d, i, count, left_open, right_open;
-    int nr, nc;
+    int d;
 
     // �ĸ�����
     for (d = 0; d < 4; d++) {
-        count = 1;  // ������ǰ��
-        left_open = 0;
-        right_open = 0;
+        int count = 1;  // ������ǰ��
+        int left_open, right_open;
 
-        // ������ͳ��
-        for (i = 1; i < 6; i++) {
-            nr = row + dir_x[d] * i;
-            nc = col + dir_y[d] * i;
-            if (!in_bounds(nr, nc)) break;
-            if (board->grid[nr][nc] == color) {
-                count++;
-            }
-            else if (board->grid[nr][nc] == EMPTY) {
-                right_open = 1;
-                break;
-            }
-            else {
-                break;
-            }
-        }
-
-        // ������ͳ��
-        for (i = 1; i < 6; i++) {
-            nr = row - dir_x[d] * i;
-            nc = col - dir_y[d] * i;
-            if (!in_bounds(nr, nc)) break;
-            if (board->grid[nr][nc] == color) {
-                count++;
-            }
-            else if (board->grid[nr][nc] == EMPTY) {
-                left_open = 1;
-                break;
-            }
-            else {
-                break;
-            }
-        }
+        // 双向扫描：正向和反向
+        count += scan_direction(board, row, col, dir_x[d], dir_y[d], color, &right_open);
+        count += scan_direction(board, row, col, -dir_x[d], -dir_y[d], color, &left_open);
 
         total += get_pattern_score(count, left_open, right_open);
     }
