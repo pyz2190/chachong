@@ -1,0 +1,22 @@
+# Compiled binaries
+*.exe
+*.out
+*.o
+*.obj
+
+# Compiled C/C++ executables (no extension on Linux)
+22小改
+gomuku
+002
+003
+
+# Editor temporary files
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build directories
+build/
+bin/
+obj/
