@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>济事楼导览系统 · 同济大学</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- 顶部：始终可见的全局导航与搜索 -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">济</span>
+      <div class="brand-text">
+        <h1>济事楼导览系统</h1>
+        <p>同济大学 · 4-5 层房间参观导览</p>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <input id="searchInput" type="search" autocomplete="off"
+             placeholder="搜索房间、用途或人员，如「学工办」「葛蕾」">
+      <button id="searchClear" class="search-clear" title="清除" aria-label="清除搜索">×</button>
+    </div>
+  </header>
+
+  <!-- 控制栏：楼层切换 + 分类筛选 -->
+  <nav class="controls" aria-label="楼层与分类导航">
+    <div class="floor-switch" role="tablist" aria-label="楼层选择">
+      <button class="floor-btn is-active" data-floor="all" role="tab">全部</button>
+      <button class="floor-btn" data-floor="4" role="tab">4 楼</button>
+      <button class="floor-btn" data-floor="5" role="tab">5 楼</button>
+    </div>
+    <div id="categoryFilter" class="category-filter" aria-label="房间分类筛选"></div>
+  </nav>
+
+  <main class="layout">
+    <!-- 左侧：房间总览 -->
+    <section class="overview" aria-label="房间总览">
+      <div class="overview-head">
+        <h2>房间总览</h2>
+        <span id="resultCount" class="result-count"></span>
+      </div>
+      <div id="floorSections"></div>
+      <p id="emptyHint" class="empty-hint" hidden>未找到匹配的房间，请尝试其它关键字。</p>
+    </section>
+
+    <!-- 右侧：房间详情（流动呈现，无需跳转页面） -->
+    <aside id="detailPanel" class="detail" aria-label="房间详情">
+      <div class="detail-placeholder">
+        <div class="ph-icon">🏛️</div>
+        <p>从左侧选择任意房间<br>即可在此查看详细信息</p>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    <p>课程作业 · Fluid Navigation 流畅导航设计示例 ｜ 数据为演示用虚构内容</p>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
