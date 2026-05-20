@@ -21,11 +21,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ===== 顶部栏（全局持续可见） ===== */
+/* ===== 顶部栏 ===== */
 .topbar {
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 30;
   display: flex;
   align-items: center;
   gap: 24px;
@@ -54,7 +54,7 @@ body {
   position: relative;
   flex: 1;
   min-width: 240px;
-  max-width: 460px;
+  max-width: 520px;
   margin-left: auto;
 }
 
@@ -86,32 +86,38 @@ body {
 .controls {
   position: sticky;
   top: 72px;
-  z-index: 15;
+  z-index: 25;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   padding: 12px 28px;
   background: var(--surface);
   border-bottom: 1px solid var(--line);
   flex-wrap: wrap;
 }
 
-.floor-switch { display: flex; gap: 4px; background: var(--bg); padding: 4px; border-radius: 24px; }
+.floor-switch, .view-switch {
+  display: flex;
+  gap: 4px;
+  background: var(--bg);
+  padding: 4px;
+  border-radius: 24px;
+}
 
-.floor-btn {
+.floor-btn, .view-btn {
   border: none;
   background: transparent;
-  padding: 7px 18px;
+  padding: 7px 16px;
   border-radius: 20px;
   font-size: 14px;
   color: var(--ink-soft);
   cursor: pointer;
   transition: background 0.18s, color 0.18s;
 }
-.floor-btn:hover { color: var(--accent); }
-.floor-btn.is-active { background: var(--accent); color: #fff; }
+.floor-btn:hover, .view-btn:hover { color: var(--accent); }
+.floor-btn.is-active, .view-btn.is-active { background: var(--accent); color: #fff; }
 
-.category-filter { display: flex; gap: 8px; flex-wrap: wrap; }
+.category-filter { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
 
 .cat-chip {
   display: inline-flex;
@@ -134,23 +140,122 @@ body {
   display: grid;
   grid-template-columns: 1fr 380px;
   gap: 20px;
-  max-width: 1280px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 22px 28px 40px;
+  padding: 20px 28px 40px;
 }
 
-.overview-head {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 6px;
+.content {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
 }
+
+/* ===== 平面图视图 ===== */
+.plan-hint {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, #fafbfd 0%, #fff 100%);
+}
+.plan-hint > span:first-child { font-size: 16px; font-weight: 600; color: var(--accent); }
+.plan-tip { font-size: 13px; color: var(--ink-soft); }
+.plan-tip b { color: var(--accent); padding: 0 2px; }
+
+.plan-canvas {
+  padding: 16px;
+  background:
+    linear-gradient(#eef2f6 1px, transparent 1px) 0 0 / 20px 20px,
+    linear-gradient(90deg, #eef2f6 1px, transparent 1px) 0 0 / 20px 20px,
+    #fbfcfe;
+  min-height: 480px;
+}
+
+#floorPlan { display: block; width: 100%; height: auto; max-height: 720px; }
+
+.floor-outline {
+  fill: #f3f6fa;
+  stroke: #b8c1cd;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+/* —— SVG 房间样式 —— */
+.room { cursor: pointer; }
+.room .room-shape {
+  fill: #fff;
+  stroke: var(--cat, #888);
+  stroke-width: 1.4;
+  transition: fill 0.18s, stroke-width 0.18s;
+}
+.room .room-label {
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  fill: #2a3340;
+  text-anchor: middle;
+  pointer-events: none;
+  user-select: none;
+}
+.room:hover .room-shape {
+  fill: color-mix(in srgb, var(--cat) 14%, #fff);
+  stroke-width: 2.4;
+}
+.room.is-selected .room-shape {
+  fill: color-mix(in srgb, var(--cat) 22%, #fff);
+  stroke-width: 3;
+  filter: drop-shadow(0 2px 6px rgba(20, 40, 70, 0.18));
+}
+.room.is-dimmed .room-shape { fill: #f2f4f7; stroke: #cbd1da; }
+.room.is-dimmed .room-label { fill: #b0b6bf; }
+.room.is-blocked .room-shape { fill: #fde7e7; stroke: #d33b3b; }
+
+/* —— 公共设施 —— */
+.fixture rect {
+  fill: #e8ecf1;
+  stroke: #c0c8d2;
+  stroke-width: 1;
+}
+.fixture-glyph {
+  font-size: 14px;
+  fill: #6a7280;
+  text-anchor: middle;
+  pointer-events: none;
+}
+.fixture-blocked rect { fill: #fde7e7; stroke: #d33b3b; }
+.fixture-blocked .fixture-glyph { fill: #d33b3b; font-size: 18px; font-weight: 700; }
+.fixture-label {
+  font-size: 11px;
+  fill: #d33b3b;
+  text-anchor: middle;
+  font-weight: 600;
+}
+
+/* —— 图例 —— */
+.plan-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 10px 20px;
+  border-top: 1px solid var(--line);
+  background: #fafbfd;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.legend-title { font-weight: 600; color: var(--ink); }
+.legend-item { display: inline-flex; align-items: center; gap: 5px; }
+.legend-item .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+/* ===== 列表视图 ===== */
+.list-view { padding: 18px 20px; }
+.overview-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
 .overview-head h2 { font-size: 17px; }
 .result-count { font-size: 13px; color: var(--ink-soft); }
 
-/* ===== 楼层分组与房间网格 ===== */
-.floor-group { margin-top: 18px; }
-
+.floor-group { margin-top: 14px; }
 .floor-label {
   display: flex;
   align-items: center;
@@ -185,7 +290,6 @@ body {
 }
 .room-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
 .room-card.is-selected { box-shadow: 0 0 0 2px var(--accent); }
-
 .room-card .rc-id { font-size: 13px; color: var(--ink-soft); }
 .room-card .rc-name { font-size: 15px; font-weight: 600; margin: 2px 0 8px; }
 
@@ -205,19 +309,19 @@ body {
   font-size: 14px;
 }
 
-/* 关键字高亮 */
 mark { background: #ffe27a; color: inherit; border-radius: 3px; padding: 0 2px; }
 
 /* ===== 详情面板 ===== */
 .detail {
   position: sticky;
-  top: 132px;
+  top: 142px;
   align-self: start;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   min-height: 320px;
-  overflow: hidden;
+  max-height: calc(100vh - 162px);
+  overflow: auto;
 }
 
 .detail-placeholder {
@@ -241,12 +345,11 @@ mark { background: #ffe27a; color: inherit; border-radius: 3px; padding: 0 2px; 
   color: #fff;
   background: var(--cat, var(--accent));
 }
-.dc-header .dc-id { font-size: 13px; opacity: 0.85; }
+.dc-header .dc-id { font-size: 13px; opacity: 0.88; }
 .dc-header .dc-name { font-size: 20px; font-weight: 700; margin-top: 2px; }
 .dc-header .dc-cat { font-size: 12px; margin-top: 6px; opacity: 0.9; }
 
 .dc-body { padding: 18px 20px; }
-
 .dc-section { margin-bottom: 16px; }
 .dc-section h4 {
   font-size: 12px;
@@ -298,6 +401,23 @@ mark { background: #ffe27a; color: inherit; border-radius: 3px; padding: 0 2px; 
 }
 .dc-tag:hover { background: var(--accent-soft); color: var(--accent); }
 
+/* ===== 悬停提示 ===== */
+.tooltip {
+  position: fixed;
+  z-index: 100;
+  min-width: 180px;
+  max-width: 280px;
+  background: var(--surface);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(20, 40, 70, 0.18);
+  overflow: hidden;
+  pointer-events: none;
+  font-size: 13px;
+}
+.tt-head { padding: 6px 12px; color: #fff; font-weight: 600; font-size: 13px; }
+.tt-body { padding: 8px 12px; color: var(--ink); }
+.tt-staff { color: var(--ink-soft); font-size: 12px; margin-top: 3px; }
+
 /* ===== 页脚 ===== */
 .footer {
   text-align: center;
@@ -308,8 +428,9 @@ mark { background: #ffe27a; color: inherit; border-radius: 3px; padding: 0 2px; 
 }
 
 /* ===== 响应式 ===== */
-@media (max-width: 860px) {
+@media (max-width: 900px) {
   .layout { grid-template-columns: 1fr; }
-  .detail { position: static; }
+  .detail { position: static; max-height: none; }
   .controls { top: 64px; }
+  .category-filter { margin-left: 0; }
 }
