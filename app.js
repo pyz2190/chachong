@@ -35,12 +35,18 @@
     return safe.replace(new RegExp('(' + kw + ')', 'gi'), '<mark>$1</mark>');
   }
 
-  // 判断房间是否命中搜索关键字（房间号 / 名称 / 用途 / 人员 / 标签）
+  // 将一位教师条目展开为可检索的字符串
+  function staffText(s) {
+    return [s.name, s.title, s.note].filter(Boolean).join(' ');
+  }
+
+  // 判断房间是否命中搜索关键字（房间号 / 名称 / 用途 / 人员姓名职称 / 标签）
   function matchesKeyword(room) {
     if (!state.keyword) return true;
     const haystack = [
       room.id, room.name, room.purpose,
-      room.staff.join(' '), room.tags.join(' '),
+      room.staff.map(staffText).join(' '),
+      room.tags.join(' '),
       CATEGORY_META[room.category].label
     ].join(' ').toLowerCase();
     return haystack.indexOf(state.keyword) !== -1;
@@ -126,10 +132,22 @@
     const meta = CATEGORY_META[room.category];
 
     const staffHtml = room.staff.length
-      ? '<div class="staff-list">' + room.staff.map((s) =>
-          '<div class="staff-item"><span class="staff-avatar">' +
-          escapeHtml(s.charAt(0)) + '</span><span>' + highlight(s) + '</span></div>'
-        ).join('') + '</div>'
+      ? '<div class="staff-list">' + room.staff.map((s) => {
+          const titlePart = s.title ? '<span class="staff-title">' + highlight(s.title) + '</span>' : '';
+          const notePart  = s.note  ? '<div class="staff-note">' + highlight(s.note) + '</div>' : '';
+          return (
+            '<div class="staff-item">' +
+              '<span class="staff-avatar">' + escapeHtml(s.name.charAt(0)) + '</span>' +
+              '<div class="staff-info">' +
+                '<div class="staff-line">' +
+                  '<span class="staff-name">' + highlight(s.name) + '</span>' +
+                  titlePart +
+                '</div>' +
+                notePart +
+              '</div>' +
+            '</div>'
+          );
+        }).join('') + '</div>'
       : '<p class="staff-empty">该房间为公共空间，无固定人员。</p>';
 
     const tagsHtml = room.tags.map((t) =>
