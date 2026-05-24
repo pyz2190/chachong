@@ -14,6 +14,12 @@
     blocked:  'var(--c-blocked)'
   };
 
+  const FIXTURE_GLYPH = {
+    stairs:   '🪜',
+    elevator: '🛗',
+    bathroom: '🚻',
+    blocked:  '⛔'
+  };
   const FIXTURE_LABEL = {
     stairs:   '楼梯',
     elevator: '电梯',
@@ -111,12 +117,30 @@
     r.setAttribute('x', fx.x); r.setAttribute('y', fx.y);
     r.setAttribute('width', fx.w); r.setAttribute('height', fx.h);
     g.appendChild(r);
-    const label = document.createElementNS(SVG_NS, 'text');
-    label.setAttribute('x', fx.x + fx.w / 2);
-    label.setAttribute('y', fx.y + fx.h / 2 + 4);
-    label.setAttribute('class', 'fixture-label');
-    label.textContent = fx.label || FIXTURE_LABEL[fx.type] || '';
-    g.appendChild(label);
+    const cx = fx.x + fx.w / 2;
+    const glyph = FIXTURE_GLYPH[fx.type];
+    const labelText = fx.label || FIXTURE_LABEL[fx.type] || '';
+    if (glyph && fx.h >= 28) {
+      const g1 = document.createElementNS(SVG_NS, 'text');
+      g1.setAttribute('x', cx);
+      g1.setAttribute('y', fx.y + fx.h / 2 - 1);
+      g1.setAttribute('class', 'fixture-glyph');
+      g1.textContent = glyph;
+      g.appendChild(g1);
+      const lbl = document.createElementNS(SVG_NS, 'text');
+      lbl.setAttribute('x', cx);
+      lbl.setAttribute('y', fx.y + fx.h - 4);
+      lbl.setAttribute('class', 'fixture-label');
+      lbl.textContent = labelText;
+      g.appendChild(lbl);
+    } else {
+      const lbl = document.createElementNS(SVG_NS, 'text');
+      lbl.setAttribute('x', cx);
+      lbl.setAttribute('y', fx.y + fx.h / 2 + 4);
+      lbl.setAttribute('class', 'fixture-label');
+      lbl.textContent = labelText;
+      g.appendChild(lbl);
+    }
     svg.appendChild(g);
   }
 
@@ -266,7 +290,11 @@
   function renderDetail() {
     const room = ROOM_MAP[state.selectedId];
     if (!room) {
-      detailPanel.innerHTML = '<div class="detail-empty">请在平面图中选择房间</div>';
+      detailPanel.innerHTML =
+        '<div class="detail-empty">' +
+          '<div class="empty-icon" aria-hidden="true">📍</div>' +
+          '<p>请在左侧平面图中选择房间<br>查看用途与人员信息</p>' +
+        '</div>';
       return;
     }
     const meta = CATEGORY_META[room.category] || CATEGORY_META.unknown;

@@ -14,8 +14,9 @@
         <p>同济大学计算机科学与技术学院 · 四至五层</p>
       </div>
       <div class="site-search">
+        <span class="search-icon" aria-hidden="true">🔍</span>
         <input id="searchInput" type="search" autocomplete="off"
-               placeholder="按房间号、名称或人员姓名检索">
+               placeholder="搜索房间号、名称或人员姓名">
         <button id="searchClear" class="search-clear" title="清除" aria-label="清除">×</button>
       </div>
     </div>
@@ -30,8 +31,8 @@
       </div>
       <div class="nav-group">
         <span class="nav-label">视图</span>
-        <button class="nav-link is-active" data-view="plan">平面图</button>
-        <button class="nav-link"           data-view="list">房间列表</button>
+        <button class="nav-link is-active" data-view="plan"><span class="nav-emoji">🗺️</span>平面图</button>
+        <button class="nav-link"           data-view="list"><span class="nav-emoji">📋</span>列表</button>
       </div>
       <div class="nav-group" id="categoryFilter">
         <span class="nav-label">分类</span>
@@ -70,7 +71,10 @@
     </section>
 
     <aside id="detailPanel" class="detail" aria-label="房间详情">
-      <div class="detail-empty">请在平面图中选择房间</div>
+      <div class="detail-empty">
+        <div class="empty-icon" aria-hidden="true">📍</div>
+        <p>请在左侧平面图中选择房间<br>查看用途与人员信息</p>
+      </div>
     </aside>
   </main>
 
