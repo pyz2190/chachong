@@ -157,6 +157,25 @@
       floorPlanSvg.appendChild(path);
     }
 
+    // 为每间房定义 clipPath，用于把分类色条裁剪在房间内部
+    const defs = document.createElementNS(SVG_NS, 'defs');
+    layout.rooms.forEach((r) => {
+      const clip = document.createElementNS(SVG_NS, 'clipPath');
+      clip.setAttribute('id', 'clip-' + state.floor + '-' + r.id);
+      let cs;
+      if (r.rect) {
+        cs = document.createElementNS(SVG_NS, 'rect');
+        cs.setAttribute('x', r.rect[0]); cs.setAttribute('y', r.rect[1]);
+        cs.setAttribute('width', r.rect[2]); cs.setAttribute('height', r.rect[3]);
+      } else {
+        cs = document.createElementNS(SVG_NS, 'polygon');
+        cs.setAttribute('points', r.polygon);
+      }
+      clip.appendChild(cs);
+      defs.appendChild(clip);
+    });
+    floorPlanSvg.appendChild(defs);
+
     (layout.fixtures || []).forEach((fx) => renderFixture(floorPlanSvg, fx));
 
     let matchCount = 0;
@@ -203,14 +222,15 @@
       shape.setAttribute('class', 'room-shape');
       g.appendChild(shape);
 
-      // 分类色条（顶部 3px 细条）
+      // 分类色条（顶部 3px 细条，裁剪在房间形状内，避免溢出多边形）
       if (room.category !== 'blocked') {
         const band = document.createElementNS(SVG_NS, 'rect');
         band.setAttribute('x', bandX);
         band.setAttribute('y', bandY);
         band.setAttribute('width', bandW);
-        band.setAttribute('height', 3);
+        band.setAttribute('height', 4);
         band.setAttribute('class', 'room-cat-band');
+        band.setAttribute('clip-path', 'url(#clip-' + state.floor + '-' + r.id + ')');
         g.appendChild(band);
       }
 
