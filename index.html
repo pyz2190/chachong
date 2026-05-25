@@ -10,8 +10,8 @@
   <header class="site-header">
     <div class="site-header-inner">
       <div class="site-title">
-        <h1>济事楼导览</h1>
-        <p>同济大学计算机科学与技术学院 · 四至五层</p>
+        <div class="breadcrumb">同济大学计算机科学与技术学院 / 济事楼 4-5 层</div>
+        <h1>济事楼导览系统</h1>
       </div>
       <div class="site-search">
         <span class="search-icon" aria-hidden="true">🔍</span>
@@ -25,9 +25,8 @@
   <nav class="subnav" aria-label="楼层与分类">
     <div class="subnav-inner">
       <div class="nav-group">
-        <span class="nav-label">楼层</span>
-        <button class="nav-link is-active" data-floor="4">四楼</button>
-        <button class="nav-link"           data-floor="5">五楼</button>
+        <button class="nav-pill is-active" data-floor="4">4楼</button>
+        <button class="nav-pill"           data-floor="5">5楼</button>
       </div>
       <div class="nav-group">
         <span class="nav-label">视图</span>
@@ -37,6 +36,7 @@
       <div class="nav-group" id="categoryFilter">
         <span class="nav-label">分类</span>
       </div>
+      <div class="subnav-counts" id="subnavCounts"></div>
     </div>
   </nav>
 
@@ -53,6 +53,7 @@
         <ul class="plan-legend" aria-label="图例">
           <li><span class="swatch" data-cat="office"></span>行政办公</li>
           <li><span class="swatch" data-cat="teaching"></span>教学空间</li>
+          <li><span class="swatch" data-cat="meeting"></span>会议研讨</li>
           <li><span class="swatch" data-cat="research"></span>科研空间</li>
           <li><span class="swatch" data-cat="service"></span>服务窗口</li>
           <li><span class="swatch" data-cat="unknown"></span>辅助用房</li>

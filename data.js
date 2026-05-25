@@ -64,9 +64,9 @@ const ROOM_DATA = [
     tags: ['教师工作室', '实验中心']
   },
   {
-    id: '413', floor: 4, name: '辅助用房', category: 'unknown',
-    purpose: '平面图标注的辅助/未分配用房，公开信息暂缺。', hours: '—',
-    staff: [], tags: ['辅助用房']
+    id: '413', floor: 4, name: '储藏室', category: 'unknown',
+    purpose: '楼层公共储藏间，存放办公及教学辅助物资。', hours: '内部使用',
+    staff: [], tags: ['储藏室', '辅助用房']
   },
   {
     id: '414', floor: 4, name: '教师工作室', category: 'office',
@@ -79,9 +79,9 @@ const ROOM_DATA = [
     tags: ['教师工作室']
   },
   {
-    id: '415', floor: 4, name: '辅助用房', category: 'unknown',
-    purpose: '平面图标注的辅助/未分配用房，公开信息暂缺。', hours: '—',
-    staff: [], tags: ['辅助用房']
+    id: '415', floor: 4, name: '储藏室', category: 'unknown',
+    purpose: '楼层公共储藏间，存放办公及教学辅助物资。', hours: '内部使用',
+    staff: [], tags: ['储藏室', '辅助用房']
   },
   {
     id: '416', floor: 4, name: '多媒体教学机房', category: 'teaching',
@@ -93,9 +93,9 @@ const ROOM_DATA = [
     tags: ['多媒体教学机房', '机房']
   },
   {
-    id: '417', floor: 4, name: '辅助用房', category: 'unknown',
-    purpose: '平面图标注的辅助/未分配用房，公开信息暂缺。', hours: '—',
-    staff: [], tags: ['辅助用房']
+    id: '417', floor: 4, name: '储藏室', category: 'unknown',
+    purpose: '楼层公共储藏间，存放办公及教学辅助物资。', hours: '内部使用',
+    staff: [], tags: ['储藏室', '辅助用房']
   },
   {
     id: '418', floor: 4, name: '教师工作室 / 研究生工作室（418L / 418R）', category: 'research',
@@ -117,9 +117,9 @@ const ROOM_DATA = [
     tags: ['计算机系统实验室', '实验中心']
   },
   {
-    id: '426', floor: 4, name: '辅助用房', category: 'unknown',
-    purpose: '平面图标注的辅助/未分配用房，公开信息暂缺。', hours: '—',
-    staff: [], tags: ['辅助用房']
+    id: '426', floor: 4, name: '储藏室', category: 'unknown',
+    purpose: '楼层公共储藏间，存放办公及教学辅助物资。', hours: '内部使用',
+    staff: [], tags: ['储藏室', '辅助用房']
   },
   {
     id: '428', floor: 4, name: '服务器机房', category: 'research',
@@ -140,14 +140,14 @@ const ROOM_DATA = [
     tags: ['多媒体教学机房', '机房']
   },
   {
-    id: '432', floor: 4, name: '辅助用房', category: 'unknown',
-    purpose: '平面图标注的辅助/未分配用房，公开信息暂缺。', hours: '—',
-    staff: [], tags: ['辅助用房']
+    id: '432', floor: 4, name: '储藏室', category: 'unknown',
+    purpose: '楼层公共储藏间，存放办公及教学辅助物资。', hours: '内部使用',
+    staff: [], tags: ['储藏室', '辅助用房']
   },
   {
-    id: '434', floor: 4, name: '辅助用房', category: 'unknown',
-    purpose: '平面图标注的辅助/未分配用房，公开信息暂缺。', hours: '—',
-    staff: [], tags: ['辅助用房']
+    id: '434', floor: 4, name: '储藏室', category: 'unknown',
+    purpose: '楼层公共储藏间，存放办公及教学辅助物资。', hours: '内部使用',
+    staff: [], tags: ['储藏室', '辅助用房']
   },
   {
     id: '440', floor: 4, name: '综合事务管理中心', category: 'service',
@@ -163,9 +163,9 @@ const ROOM_DATA = [
     tags: ['综合事务', '人事人才', '财务', '空间管理', '资产管理']
   },
   {
-    id: '441', floor: 4, name: '辅助用房', category: 'unknown',
-    purpose: '平面图标注的辅助/未分配用房，公开信息暂缺。', hours: '—',
-    staff: [], tags: ['辅助用房']
+    id: '441', floor: 4, name: '会议室', category: 'meeting',
+    purpose: '用于学院会议、研讨交流和临时活动，对院内开放预约使用。', hours: '工作日 8:30 - 17:30（需预约）',
+    staff: [], tags: ['会议室', '研讨', '预约使用']
   },
   {
     id: '442', floor: 4, name: '教学管理中心', category: 'service',
@@ -254,9 +254,9 @@ const ROOM_DATA = [
     tags: ['副院长办公室', '科研', '本科招生', '研究生教学']
   },
   {
-    id: '455', floor: 4, name: '辅助用房', category: 'unknown',
-    purpose: '平面图标注的辅助/未分配用房，公开信息暂缺。', hours: '—',
-    staff: [], tags: ['辅助用房']
+    id: '455', floor: 4, name: '公共空间', category: 'unknown',
+    purpose: '楼层公共休息与等候区域，供访客及师生临时使用。', hours: '随楼层开放时间',
+    staff: [], tags: ['公共空间', '休息区']
   },
   {
     id: '456', floor: 4, name: '党委办公室', category: 'office',
@@ -323,9 +323,9 @@ const ROOM_DATA = [
     tags: ['研究生工作室']
   },
   {
-    id: '512', floor: 5, name: '辅助用房', category: 'unknown',
-    purpose: '平面图标注的辅助/未分配用房，公开信息暂缺。', hours: '—',
-    staff: [], tags: ['辅助用房']
+    id: '512', floor: 5, name: '储藏室', category: 'unknown',
+    purpose: '楼层公共储藏间，存放办公及教学辅助物资。', hours: '内部使用',
+    staff: [], tags: ['储藏室', '辅助用房']
   },
   {
     id: '514', floor: 5, name: '教师工作室', category: 'office',
@@ -380,7 +380,7 @@ const ROOM_DATA = [
 const CATEGORY_META = {
   office:   { label: '行政办公', color: '#3b6ea5' },
   teaching: { label: '教学空间', color: '#2e8b57' },
-  meeting:  { label: '会议研讨', color: '#b8860b' },
+  meeting:  { label: '会议研讨', color: '#c07a1a' },
   research: { label: '科研空间', color: '#8a5cb0' },
   service:  { label: '服务窗口', color: '#c0563b' },
   unknown:  { label: '辅助用房', color: '#9aa3ad' },

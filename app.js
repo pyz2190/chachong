@@ -8,6 +8,7 @@
   const CAT_VARS = {
     office:   'var(--c-office)',
     teaching: 'var(--c-teaching)',
+    meeting:  'var(--c-meeting)',
     research: 'var(--c-research)',
     service:  'var(--c-service)',
     unknown:  'var(--c-unknown)',
@@ -49,6 +50,7 @@
   const planMeta       = $('#planMeta');
   const floorPlanSvg   = $('#floorPlan');
   const tooltip        = $('#tooltip');
+  const subnavCounts   = $('#subnavCounts');
 
   const CN_NUM = ['零','一','二','三','四','五','六','七','八','九'];
 
@@ -89,13 +91,23 @@
     return ROOM_DATA.filter((r) => String(r.floor) === String(floor));
   }
 
+  function getRoomStatus(room) {
+    if (room.category === 'blocked') return { cls: 'status-closed', label: '此路不通' };
+    if (room.category === 'unknown') return { cls: 'status-public', label: '辅助用房' };
+    if (room.id === '455') return { cls: 'status-public', label: '公共空间' };
+    if (room.category === 'meeting') return { cls: 'status-open', label: '可预约使用' };
+    if (room.category === 'research') return { cls: 'status-card', label: '凭卡进入' };
+    if (room.category === 'teaching') return { cls: 'status-schedule', label: '按课表使用' };
+    return { cls: 'status-open', label: '可以使用' };
+  }
+
   // ============== 分类筛选 ==============
   function renderCategoryFilter() {
     // 清空除 label 以外的子元素
     [...categoryFilter.children].forEach((c) => {
       if (!c.classList.contains('nav-label')) c.remove();
     });
-    ['office','teaching','research','service'].forEach((key) => {
+    ['office','teaching','meeting','research','service'].forEach((key) => {
       const meta = CATEGORY_META[key];
       const btn = document.createElement('button');
       btn.className = 'nav-link' + (state.categories.has(key) ? ' is-active' : '');
@@ -307,18 +319,51 @@
   }
 
   // ============== 详情面板 ==============
+  function renderRoomIndex() {
+    const rooms = getFloorRooms(state.floor).filter(passesFilter);
+    const floorLabel = state.floor === '4' ? '四楼' : '五楼';
+    let rowsHtml = '';
+    rooms.forEach((room) => {
+      const names = room.staff.map((s) => s.name).slice(0, 3).join('、') +
+        (room.staff.length > 3 ? ' 等' : '');
+      rowsHtml +=
+        '<tr data-room-id="' + escapeHtml(room.id) + '">' +
+          '<td class="ri-id">' + highlight(room.id) + '</td>' +
+          '<td>' + highlight(room.name) + '</td>' +
+          '<td class="ri-staff">' + (names ? highlight(names) : '—') + '</td>' +
+        '</tr>';
+    });
+    detailPanel.innerHTML =
+      '<div class="detail-empty">' +
+        '<div class="detail-empty-hint">' +
+          '<span class="empty-icon" aria-hidden="true">📍</span>' +
+          '<span>在左侧平面图中点击房间查看详情</span>' +
+        '</div>' +
+        '<div class="room-index-section">' +
+          '<div class="room-index-header">' +
+            '<span class="ri-title">ROOM INDEX</span>' +
+            '<span class="ri-subtitle">济事楼' + floorLabel + '房间总览</span>' +
+          '</div>' +
+          '<table class="room-index-table">' +
+            '<thead><tr><th>房间</th><th>名称</th><th>人员</th></tr></thead>' +
+            '<tbody>' + rowsHtml + '</tbody>' +
+          '</table>' +
+        '</div>' +
+      '</div>';
+    detailPanel.querySelectorAll('[data-room-id]').forEach((tr) => {
+      tr.addEventListener('click', () => selectRoom(tr.dataset.roomId));
+    });
+  }
+
   function renderDetail() {
     const room = ROOM_MAP[state.selectedId];
     if (!room) {
-      detailPanel.innerHTML =
-        '<div class="detail-empty">' +
-          '<div class="empty-icon" aria-hidden="true">📍</div>' +
-          '<p>请在左侧平面图中选择房间<br>查看用途与人员信息</p>' +
-        '</div>';
+      renderRoomIndex();
       return;
     }
     const meta = CATEGORY_META[room.category] || CATEGORY_META.unknown;
     const catColor = CAT_VARS[room.category] || CAT_VARS.unknown;
+    const status = getRoomStatus(room);
 
     const staffHtml = room.staff.length
       ? '<div class="staff-list">' + room.staff.map((s) => {
@@ -331,7 +376,10 @@
             '</div>'
           );
         }).join('') + '</div>'
-      : '<p class="staff-empty">暂无登记人员信息</p>';
+      : '<div class="staff-no-info">' +
+          '<span class="staff-no-icon" aria-hidden="true">🗂️</span>' +
+          '<span>该房间暂无公开人员信息</span>' +
+        '</div>';
 
     const tagsHtml = room.tags.length
       ? '<div class="dc-tags">' + room.tags.map((t) =>
@@ -343,6 +391,7 @@
       '<div class="dc-header" style="--cat:' + catColor + '">' +
         '<div class="dc-id">济事楼 ' + room.id + ' 室</div>' +
         '<div class="dc-name">' + highlight(room.name) + '</div>' +
+        '<span class="status-badge ' + status.cls + '">' + status.label + '</span>' +
         '<span class="dc-cat-tag">' + meta.label + '</span>' +
       '</div>' +
       '<div class="dc-body">' +
@@ -390,19 +439,29 @@
   function hideTooltip() { tooltip.hidden = true; }
 
   // ============== 选择房间 ==============
+  function syncFloorButtons() {
+    document.querySelectorAll('[data-floor]').forEach((b) => {
+      b.classList.toggle('is-active', b.dataset.floor === state.floor);
+    });
+  }
+
   function selectRoom(id) {
     state.selectedId = id;
     const room = ROOM_MAP[id];
     if (room && String(room.floor) !== state.floor) {
       state.floor = String(room.floor);
-      document.querySelectorAll('[data-floor]').forEach((b) => {
-        b.classList.toggle('is-active', b.dataset.floor === state.floor);
-      });
+      syncFloorButtons();
     }
     render();
     if (window.innerWidth <= 900) {
       detailPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  }
+
+  function updateSubnavCounts() {
+    const f4 = ROOM_DATA.filter((r) => r.floor === 4).length;
+    const f5 = ROOM_DATA.filter((r) => r.floor === 5).length;
+    if (subnavCounts) subnavCounts.textContent = '4楼 ' + f4 + ' 间 | 5楼 ' + f5 + ' 间';
   }
 
   // ============== 渲染入口 ==============
@@ -423,9 +482,8 @@
   // ============== 事件 ==============
   document.querySelectorAll('[data-floor]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('[data-floor]').forEach((b) => b.classList.remove('is-active'));
-      btn.classList.add('is-active');
       state.floor = btn.dataset.floor;
+      syncFloorButtons();
       render();
     });
   });
@@ -446,9 +504,7 @@
       const hits = ROOM_DATA.filter(passesFilter);
       if (hits.length && !hits.some((r) => String(r.floor) === state.floor)) {
         state.floor = String(hits[0].floor);
-        document.querySelectorAll('[data-floor]').forEach((b) => {
-          b.classList.toggle('is-active', b.dataset.floor === state.floor);
-        });
+        syncFloorButtons();
       }
     }
     render();
@@ -470,5 +526,6 @@
     }
   });
 
+  updateSubnavCounts();
   render();
 })();
