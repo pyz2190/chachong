@@ -302,38 +302,6 @@ button { font-family: inherit; }
 .room.is-dimmed .room-label { fill: #b3b8c2; }
 .room.is-blocked .room-shape { fill: #fdecec; stroke: var(--c-blocked); }
 
-/* ---------- 图片底图模式（4 楼采用真实平面图截图） ---------- */
-#floorPlan.is-image-mode {
-  background: #fff;
-}
-#floorPlan.is-image-mode .floor-outline { display: none; }
-#floorPlan.is-image-mode .room .room-shape {
-  fill: transparent;
-  stroke: transparent;
-  stroke-width: 1.5;
-  transition: fill .15s, stroke .15s;
-}
-#floorPlan.is-image-mode .room .room-cat-band { display: none; }
-#floorPlan.is-image-mode .room .room-label    { display: none; }
-#floorPlan.is-image-mode .room:hover .room-shape {
-  fill: rgba(31, 80, 153, 0.14);
-  stroke: var(--accent);
-}
-#floorPlan.is-image-mode .room.is-selected .room-shape {
-  fill: rgba(44, 112, 207, 0.32);
-  stroke: var(--accent);
-  stroke-width: 2.2;
-  filter: drop-shadow(0 2px 6px rgba(31, 80, 153, 0.25));
-}
-#floorPlan.is-image-mode .room.is-dimmed .room-shape {
-  fill: rgba(230, 232, 238, 0.55);
-  stroke: transparent;
-}
-#floorPlan.is-image-mode .room.is-dimmed:hover .room-shape {
-  fill: rgba(31, 80, 153, 0.08);
-  stroke: rgba(31, 80, 153, 0.35);
-}
-
 /* 公共设施 */
 .fixture rect {
   fill: #eef1f6;

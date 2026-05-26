@@ -160,23 +160,9 @@
     const layout = FLOOR_LAYOUTS[state.floor];
     floorPlanSvg.innerHTML = '';
     floorPlanSvg.setAttribute('viewBox', layout.viewBox);
-    floorPlanSvg.classList.toggle('is-image-mode', !!layout.image);
     planTitle.textContent = '济事楼' + CN_NUM[+state.floor] + '楼平面图';
 
-    if (layout.image) {
-      const img = document.createElementNS(SVG_NS, 'image');
-      img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', layout.image);
-      img.setAttribute('href', layout.image);
-      img.setAttribute('x', 0);
-      img.setAttribute('y', 0);
-      const w = (layout.imageSize && layout.imageSize.w) || 780;
-      const h = (layout.imageSize && layout.imageSize.h) || 950;
-      img.setAttribute('width',  w);
-      img.setAttribute('height', h);
-      img.setAttribute('class', 'floor-image');
-      img.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-      floorPlanSvg.appendChild(img);
-    } else if (layout.outline) {
+    if (layout.outline) {
       const path = document.createElementNS(SVG_NS, 'path');
       path.setAttribute('d', layout.outline);
       path.setAttribute('class', 'floor-outline');
